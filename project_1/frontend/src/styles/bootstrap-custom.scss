@@ -1,0 +1,19 @@
+
+$primary: #7468E9;
+$secondary: #05C7E7;
+$success: #6BE34F;
+$info: #B46EF9;
+$warning: #F9DD6E;
+$danger: #FC6E5A;
+$light: #F0F4F9;
+$dark: #383838;
+
+// Dark mode colors
+$bg-color: #343a40; // Dark gray
+$text-color: #f8f9fa; // Light gray
+
+// Override Bootstrap's variables
+$body-bg: $bg-color;
+$body-color: $text-color;
+
+@import "~bootstrap/scss/bootstrap";
