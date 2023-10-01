@@ -61,7 +61,7 @@ const openai = new OpenAIApi(configuration);
 // Function to send a request to the OPENAI Completion API
 async function runCompletion(prompt) {
     const response = await openai.createCompletion({
-        model: "text-davinci-003",
+        model: "gpt-3.5-turbo-instruct",
         prompt: prompt,
         max_tokens: 50
     });
