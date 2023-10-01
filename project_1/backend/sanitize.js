@@ -1,4 +1,4 @@
-const  stripTags = require("striptags");
+import stripTags from 'striptags';
 
 function sanitize(request, response, next) {
     for (const prop in request.body) {
@@ -9,4 +9,4 @@ function sanitize(request, response, next) {
     next();
 }
 
-module.exports = sanitize;
+export default sanitize;

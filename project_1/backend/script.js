@@ -1,47 +1,50 @@
 // Importing required modules
-const { sep, join} = require('path');
-const express = require('express');
-const dotenv = require('dotenv');
-const cors = require("cors");
-const morgan = require("morgan");
-const helmet = require("helmet");
-const compression = require('compression');
-const expressRateLimit = require("express-rate-limit");
-const sanitize = require("./middleware/sanitize.js");
-const { Configuration, OpenAIApi } = require('openai');
+import {fileURLToPath} from 'url'; // Convert a module URL to a file path
+import {dirname, parse, sep} from 'path'; // Extract directory name and get platform-specific path separator
+import express from 'express';
+import dotenv from 'dotenv';
+import cors from "cors";
+import morgan from "morgan";
+import helmet from "helmet";
+import compression from 'compression';
+import expressRateLimit from "express-rate-limit";
+import sanitize from './sanitize.js';
 
-// Load environment variables from .env file
+
+import OpenAI from 'openai';
+
 dotenv.config();
+
+// Determine the directory paths for various resources in the app
+const __dirname = dirname(fileURLToPath(import.meta.url)) + sep;
 
 // Configuration object for the app
 const cfg = {
     port: process.env.PORT || 4000,
     dir: {
         root: __dirname,
-        static: join(__dirname, 'static', sep)
+        static: __dirname + 'static' + sep
     },
     nameLen: 15,
     msgLen: 200
 };
 
-console.log(cfg)
-
 // Initialize Express app
 const app = express();
 
 // Express configurations
-app.disable('x-powered-by'); // Disable the 'X-Powered-By' header for security reasons
+app.disable('x-powered-by');
 app.set('trust proxy', 1);
 
 // Middleware configurations
-app.use(helmet()); // Set security-related HTTP headers
-app.use(cors()); // Enable CORS for all routes
-app.use(morgan("dev")); // Log HTTP requests in development
-app.use(compression()); // Compress response bodies
-app.use(express.json()); // Parse incoming JSON payloads
-app.use(express.urlencoded({ extended: true })); // Parse incoming URL-encoded payloads
-app.use(sanitize); // Prevent XSS attacks
-app.use(express.static(cfg.dir.static)); // Serve static files from the 'static' directory
+app.use(helmet());
+app.use(cors());
+app.use(morgan("dev"));
+app.use(compression());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(sanitize);
+app.use(express.static(cfg.dir.static));
 
 // Rate limiting middleware to prevent DOS attacks
 app.use("/api/", expressRateLimit({
@@ -50,30 +53,22 @@ app.use("/api/", expressRateLimit({
     message: "Too many requests, please try again later."
 }));
 
-// OpenAI API Configuration
-const configuration = new Configuration({
-    apiKey: process.env.OPEN_API_KEY
+// Initialize OpenAI instance
+const openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY
 });
-
-// Initialize OpenAI instance using OpenAIApi
-const openai = new OpenAIApi(configuration);
-
-// Function to send a request to the OPENAI Completion API
-async function runCompletion(prompt) {
-    const response = await openai.createCompletion({
-        model: "gpt-3.5-turbo-instruct",
-        prompt: prompt,
-        max_tokens: 50
-    });
-    return response;
-}
 
 // Endpoint to handle POST request to /api/chatgpt
 app.post('/api/chatgpt', async (req, res) => {
     try {
-        const {text} = req.body; // Extract the text from the request body
-        const completion = await runCompletion(text); // Pass the request text to the runCompletion function
-        res.json({data: completion.data}); // Return the completion as a JSON response
+        const {text} = req.body;
+        const chatCompletion = await openai.completions.create({
+            model: "gpt-3.5-turbo-instruct",
+            prompt: text,
+            max_tokens: 20,
+        });
+        console.log(chatCompletion)
+        res.json({data: chatCompletion});
 
     } catch (error) {
         if(error.response){
@@ -99,4 +94,4 @@ app.listen(cfg.port, () => {
 });
 
 // Export configurations and app for potential external use
-module.exports = { cfg, app };
+export { cfg, app };
