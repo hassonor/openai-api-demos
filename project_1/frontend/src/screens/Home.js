@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import './styles/style.css';
+import {Link} from "react-router-dom";
 
 function Home (){
     const [inputValue, setInputValue] = useState('');
@@ -50,7 +51,8 @@ function Home (){
     }
 
     return (
-        <div className='container'>
+        <div className='container position-relative'>
+            <Link to="/stream" className="btn btn-secondary stream-button">Stream</Link>
             <form className='form-horizontal' onSubmit={handleSubmit}>
             <div className='row form-group  mt-2'>
                 <div className='col-sm-10'>
@@ -62,12 +64,18 @@ function Home (){
                             style={{height: '100px'}}
                             value={inputValue}
                             onChange={(event) => setInputValue(event.target.value)}
+                            onKeyDown={(event) => {
+                                if (event.key === 'Enter' && !event.shiftKey) {
+                                    event.preventDefault();
+                                    handleSubmit(event);
+                                }
+                            }}
                         />
                         <label htmlFor='floatingTextarea'>Input</label>
                     </div>
                 </div>
-                <div className='col-sm-2'>
-                    <button type="submit" className='btn btn-primary custom-button'>Submit</button>
+                <div className='col-sm-2 '>
+                    <button type="submit" className='btn btn-primary custom-button mb-2'>Submit</button>
                 </div>
             </div>
             </form>

@@ -1,6 +1,6 @@
 // Importing required modules
-import {fileURLToPath} from 'url'; // Convert a module URL to a file path
-import {dirname, parse, sep} from 'path'; // Extract directory name and get platform-specific path separator
+import { fileURLToPath } from 'url';
+import { dirname, sep } from 'path';
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from "cors";
@@ -9,8 +9,7 @@ import helmet from "helmet";
 import compression from 'compression';
 import expressRateLimit from "express-rate-limit";
 import sanitize from './sanitize.js';
-
-
+import EventEmitter from 'events';
 import OpenAI from 'openai';
 
 dotenv.config();
@@ -58,6 +57,67 @@ const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY
 });
 
+// Create an EventEmitter for sending stream data
+const completionEmitter = new EventEmitter();
+
+// Function to start the completion stream
+async function startCompletionStream(prompt) {
+    const stream = await openai.chat.completions.create({
+        model: 'gpt-4',
+        messages: [{ role: 'user', content: prompt }],
+        max_tokens: 50,
+        stream: true,
+    });
+
+    for await (const part of stream) {
+        const message = part.choices[0]?.delta?.content || '';
+
+        if (message !== '[DONE]') {
+            // Emit data to SSE connection
+            completionEmitter.emit('data', message);
+        } else {
+            completionEmitter.emit('done'); // Notify stream completion
+        }
+    }
+}
+
+// Endpoint to handle POST request to /api/chatgpt/stream
+app.post('/api/chatgpt/stream', async (req, res) => {
+    try {
+        const { text } = req.body;
+
+        // Start the completion stream
+        startCompletionStream(text);
+
+        // Listen to events
+        const dataListener = (data) => {
+            res.write(data);
+        }
+        const doneListener = () => {
+            res.write('{"event":"done"}');
+            res.end();
+            // Remove listeners
+            completionEmitter.off('data', dataListener);
+            completionEmitter.off('done', doneListener);
+        }
+        completionEmitter.on('data', dataListener);
+        completionEmitter.on('done', doneListener);
+
+    } catch (error) {
+        if(error.response){
+            console.error(error.response.status, error.response.data);
+            res.status(error.response.status).json(error.response.data);
+        } else {
+            console.error('Error with OPENAI API request:', error.message);
+            res.status(500).json({
+                error: {
+                    message: 'An error occurred during your request.'
+                }
+            });
+        }
+    }
+});
+
 // Endpoint to handle POST request to /api/chatgpt
 app.post('/api/chatgpt', async (req, res) => {
     try {
@@ -65,11 +125,11 @@ app.post('/api/chatgpt', async (req, res) => {
         const chatCompletion = await openai.completions.create({
             model: "gpt-3.5-turbo-instruct",
             prompt: text,
+            temperature: 1,
             max_tokens: 20,
         });
-        console.log(chatCompletion)
+        console.log(chatCompletion);
         res.json({data: chatCompletion});
-
     } catch (error) {
         if(error.response){
             console.error(error.response.status, error.response.data);
