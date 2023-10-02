@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import '../styles/style.css';
+import {Link} from "react-router-dom";
 
 function Stream() {
     const [inputValue, setInputValue] = useState('');
@@ -61,7 +62,10 @@ function Stream() {
     };
 
     return (
-        <div className='container'>
+        <div className='container position-relative mt-4'>
+            <Link to="/pdfsummary" className="btn btn-secondary mb-3 mr-4" style={{ marginRight: '20px' }}>Book Summary</Link>
+            <Link to="/" className="btn btn-secondary mb-3">Home</Link>
+            <h5 className='display-6 mb-3'>Stream with OpenAI</h5>
             <form className='form-horizontal' onSubmit={handleSubmit}>
                 <div className='row form-group mt-2'>
                     <div className='col-sm-10'>

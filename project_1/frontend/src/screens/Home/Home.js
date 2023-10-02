@@ -51,8 +51,9 @@ function Home (){
     }
 
     return (
-        <div className='container position-relative'>
-            <Link to="/stream" className="btn btn-secondary stream-button">Stream</Link>
+        <div className='container position-relative mt-4 '>
+            <Link to="/stream" className="btn btn-secondary mb-3" style={{ marginRight: '20px' }}>Stream</Link>
+            <Link to="/pdfsummary" className="btn btn-secondary mb-3 mr-4">Book Summary</Link>
             <form className='form-horizontal' onSubmit={handleSubmit}>
             <div className='row form-group  mt-2'>
                 <div className='col-sm-10'>

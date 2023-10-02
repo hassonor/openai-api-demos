@@ -1,7 +1,20 @@
-.custom-input{
+.custom-input {
     height: 60px !important;
+    border-radius: 5px; /* Added border-radius */
 }
 
-.custom-button{
-    height: 60px !important;
+.custom-button {
+    height: 60px;
+    border-radius: 5px; /* Added border-radius */
+    background-color: #007bff; /* Brighter blue for dark mode */
+    color: #fff; /* White text */
+}
+
+.container .hero {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('../../images/library.jpeg'); /* Increased opacity */
+    height: 50vh;
+    background-position: center;
+    color: #f1f1f1; /* Brighter text color for dark mode */
+    border-radius: 10px; /* Added border-radius */
+    margin-bottom: 20px; /* Added margin for spacing */
 }

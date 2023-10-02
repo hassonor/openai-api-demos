@@ -8,6 +8,13 @@ function PDFSummary (){
     const [result, setResult] = useState('');
     const [prompt, setPrompt] = useState('');
     const [jresult, setJresult] = useState('');
+    const [maxWords, setMaxWords] = useState(100);
+    const [selectedFile, setSelectedFile] = useState(false);
+    const [loading, setLoading] = useState(false);
+
+    const handleFileChange = (event) => {
+
+    }
 
     const handleSubmit = async(event) => {
         event.preventDefault();
@@ -51,41 +58,35 @@ function PDFSummary (){
     }
 
     return (
-        <div className='container position-relative'>
-            <Link to="/stream" className="btn btn-secondary stream-button">Stream</Link>
-            <form className='form-horizontal' onSubmit={handleSubmit}>
-            <div className='row form-group  mt-2'>
-                <div className='col-sm-10'>
-                    <div className='form-floating'>
-                        <textarea
-                            className='form-control custom-input'
-                            id='floatingTextarea'
-                            placeholder='Enter a prompt'
-                            style={{height: '100px'}}
-                            value={inputValue}
-                            onChange={(event) => setInputValue(event.target.value)}
-                            onKeyDown={(event) => {
-                                if (event.key === 'Enter' && !event.shiftKey) {
-                                    event.preventDefault();
-                                    handleSubmit(event);
-                                }
-                            }}
-                        />
-                        <label htmlFor='floatingTextarea'>Input</label>
+        <div className='container position-relative mt-4'>
+            <Link to="/stream" className="btn btn-secondary mb-3" style={{ marginRight: '20px' }}>Stream</Link>
+            <Link to="/" className="btn btn-secondary mb-3">Home</Link>
+            <div className='hero d-flex align-items-center justify-content-center text-center flex-column p-4'>
+                <h1 className='display-4 mb-3'>PDF Book Summariser</h1>
+                <p className='lead mb-4'>Summarise PDF Books</p>
+                <form className='w-100'>
+                    <input type='file' accept='.pdf' onChange={handleFileChange} className='mb-3' /> {/* Added margin-bottom */}
+                    <div className="form-group row">
+                        <div className="col-sm-4 offset-sm-4 mt-3">
+                            <input type='number' min='10' value={maxWords}
+                                   onChange={(e) => {
+                                       if (e.target.value === '' || isNaN(parseInt(e.target.value))) return; // Prevent deleting the value
+                                       setMaxWords(parseInt(e.target.value));
+                                   }}
+                                   className='form-control'
+                            />
+                        </div>
+                        <button type='submit' disabled={!selectedFile || loading} className='btn btn-primary custom-button mt-1'>
+                            {loading ? 'Analysing PDF' : `Summarise PDF in about ${maxWords} words`}
+                        </button>
                     </div>
-                </div>
-                <div className='col-sm-2 '>
-                    <button type="submit" className='btn btn-primary custom-button mb-2'>Submit</button>
-                </div>
+                </form>
             </div>
-            </form>
             {error && <div className='alert alert-dark mt-3'>{error}</div>}
-            {prompt && <div className='alert alert-secondary mt-3'>{prompt}</div>}
             {result && <div className='alert alert-success mt-3'>{result}</div>}
             {result && <pre className='alert alert-info mt-3'><code>{jresult}</code></pre>}
         </div>
     )
-
 }
 
 export default PDFSummary;
