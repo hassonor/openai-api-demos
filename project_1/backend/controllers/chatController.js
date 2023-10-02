@@ -3,7 +3,7 @@ import { EventEmitter } from 'events';
 
 const completionEmitter = new EventEmitter();
 
-async function startCompletionStream(prompt) {
+async function startCompletionStream(prompt, emitter) {
     const stream = await openai.chat.completions.create({
         model: "gpt-3.5-turbo",
         messages: [{ role: 'user', content: prompt }],
@@ -15,9 +15,9 @@ async function startCompletionStream(prompt) {
         const message = part.choices[0]?.delta?.content || '';
 
         if (part.choices[0]?.finish_reason !== "stop") {
-            completionEmitter.emit('data', message);
+            emitter.emit('data', message);
         } else {
-            completionEmitter.emit('done');
+            emitter.emit('done');
         }
     }
 }
@@ -25,7 +25,12 @@ async function startCompletionStream(prompt) {
 export const streamChat = async (req, res) => {
     try {
         const { text } = req.body;
-        startCompletionStream(text);
+
+        // Create a new EventEmitter for this request
+        const localEmitter = new EventEmitter();
+
+        // Start the completion stream
+        startCompletionStream(text, localEmitter);
 
         const dataListener = (data) => {
             res.write(data);
@@ -33,18 +38,18 @@ export const streamChat = async (req, res) => {
         const doneListener = () => {
             res.write('{"event":"done"}');
             res.end();
-            completionEmitter.off('data', dataListener);
-            completionEmitter.off('done', doneListener);
+            localEmitter.off('data', dataListener);
+            localEmitter.off('done', doneListener);
         }
-        completionEmitter.on('data', dataListener);
-        completionEmitter.on('done', doneListener);
+        localEmitter.on('data', dataListener);
+        localEmitter.on('done', doneListener);
 
     } catch (error) {
         handleError(error, res);
     }
 };
 
-export const chat = async (req, res) => {
+export const chatCompletion = async (req, res) => {
     try {
         const {text} = req.body;
         const chatCompletion = await openai.completions.create({
