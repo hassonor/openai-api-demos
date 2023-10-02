@@ -72,7 +72,7 @@ async function startCompletionStream(prompt) {
     for await (const part of stream) {
         const message = part.choices[0]?.delta?.content || '';
 
-        if (message !== '[DONE]') {
+        if (part.choices[0]?.finish_reason !== "stop") {
             // Emit data to SSE connection
             completionEmitter.emit('data', message);
         } else {
