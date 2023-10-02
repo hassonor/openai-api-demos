@@ -64,6 +64,18 @@ export const chatCompletion = async (req, res) => {
     }
 };
 
+export const summaryPDF = async (req, res) => {
+    try {
+
+        // res.json({file: req.file, body: req.body});
+        const {maxWords} = req.body;
+        const pdfFile = req.file;
+
+    } catch (error) {
+        handleError(error, res);
+    }
+};
+
 function handleError(error, res) {
     if(error.response){
         console.error(error.response.status, error.response.data);

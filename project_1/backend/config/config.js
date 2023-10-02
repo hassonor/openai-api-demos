@@ -14,7 +14,8 @@ const cfg = {
     port: process.env.PORT || 4000,
     dir: {
         root: __dirname,
-        static: __dirname + 'static' + sep
+        static: __dirname + 'static' + sep,
+        pdfsummary: __dirname + 'pdfsummary' + sep
     },
     nameLen: 15,
     msgLen: 200
