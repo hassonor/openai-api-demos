@@ -63,7 +63,7 @@ const completionEmitter = new EventEmitter();
 // Function to start the completion stream
 async function startCompletionStream(prompt) {
     const stream = await openai.chat.completions.create({
-        model: 'gpt-4',
+        model: "gpt-3.5-turbo",
         messages: [{ role: 'user', content: prompt }],
         max_tokens: 50,
         stream: true,

@@ -41,6 +41,9 @@ function Stream() {
 
                     const text = new TextDecoder().decode(value);
 
+                    // Check if the text contains the unwanted event and skip it
+                    if (text.includes('{"event":"done"}')) continue;
+
                     resultData += text;
                     setResult(resultData);
 
