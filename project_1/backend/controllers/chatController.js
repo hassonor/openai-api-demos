@@ -1,5 +1,8 @@
-import openai from '../services/openaiService.js';
 import { EventEmitter } from 'events';
+import {PDFExtract} from "pdf.js-extract";
+import openai from '../services/openaiService.js';
+import {calculateTokens, splitTextIntoChunks, summariseChunk, summariseChunks} from "../helpers/pdfHelper.js";
+import {encode} from "gpt-3-encoder";
 
 const completionEmitter = new EventEmitter();
 
@@ -66,17 +69,44 @@ export const chatCompletion = async (req, res) => {
 
 export const summaryPDF = async (req, res) => {
     try {
-
-        // res.json({file: req.file, body: req.body});
-        const {maxWords} = req.body;
+        const { maxWords } = req.body;
         const pdfFile = req.file;
+
+        const pdfExtract = new PDFExtract();
+        const extractOptions = {
+            firstPage: 1,
+            lastPage: undefined,
+            password: '',
+            verbosity: -1,
+            normalizeWhitespace: false,
+            disableCombineTextItems: false,
+        };
+
+        const data = await pdfExtract.extract(pdfFile.path, extractOptions);
+        const pdfText = data.pages.map(page => page.content.map(item => item.str).join(' ')).join(' ');
+
+        if (!pdfText) {
+            return res.json({ error: "Text could not be extracted from this PDF. Please try another PDF." });
+        }
+
+        let summarisedText = pdfText;
+        const maxToken = 4000;
+        while (calculateTokens(summarisedText) > maxToken) {
+            const newChunks = splitTextIntoChunks(summarisedText, maxToken);
+            summarisedText = await summariseChunks(newChunks);
+        }
+
+        summarisedText = await summariseChunk(summarisedText, maxWords);
+        res.json({ summarisedText });
 
     } catch (error) {
         handleError(error, res);
     }
 };
 
-function handleError(error, res) {
+
+
+const handleError = (error, res) => {
     if(error.response){
         console.error(error.response.status, error.response.data);
         res.status(error.response.status).json(error.response.data);

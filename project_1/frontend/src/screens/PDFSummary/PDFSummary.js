@@ -39,6 +39,12 @@ function PDFSummary (){
             });
 
             console.log(response.data);
+            if(response.data.error){
+                setError(response.data.error);
+                return;
+            }
+            setError('');
+            setResult(response.data.summarisedText);
             setJresult(JSON.stringify(response.data, null, 2))
 
             // if(response.ok){
@@ -59,7 +65,9 @@ function PDFSummary (){
             console.log(error);
             setResult('');
             setError('An error occurred while submitting the form.');
-            setResult('');
+        }
+        finally {
+            setLoading(false);
         }
     }
 
@@ -83,14 +91,18 @@ function PDFSummary (){
                             />
                         </div>
                         <button type='submit' disabled={!selectedFile || loading} className='btn btn-primary custom-button mt-1'>
-                            {loading ? 'Analysing PDF' : `Summarise PDF in about ${maxWords} words`}
+                            {loading ? 'Analysing PDF... Please wait' : `Summarise PDF in about ${maxWords} words`}
                         </button>
                     </div>
                 </form>
             </div>
             {error && <div className='alert alert-dark mt-3'>{error}</div>}
             {result && <div className='alert alert-success mt-3'>{result}</div>}
-            {result && <pre className='alert alert-info mt-3'><code>{jresult}</code></pre>}
+            {jresult && (
+                <pre className="alert alert-info mt-3">
+                    <code>{jresult}</code>
+                </pre>
+            )}
         </div>
     )
 }

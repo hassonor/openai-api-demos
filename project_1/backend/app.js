@@ -6,7 +6,7 @@ import compression from 'compression';
 import sanitize from './middlewares/sanitize.js';
 import rateLimiter from './middlewares/rateLimiter.js';
 import chatRoutes from './routes/chatRoutes.js';
-import cfg from './config/config.js';
+import cfg from './config.js';
 
 const app = express();
 

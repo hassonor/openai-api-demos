@@ -1,7 +1,7 @@
 import express from 'express';
 import {streamChat, chatCompletion, summaryPDF} from '../controllers/chatController.js';
 import multer from "multer";
-import cfg from "../config/config.js";
+import cfg from "../config.js";
 const upload = multer({ dest: cfg.dir.pdfsummary });
 
 const router = express.Router();
