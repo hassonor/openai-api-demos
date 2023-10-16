@@ -52,7 +52,31 @@ export const streamChat = async (req, res) => {
     }
 };
 
-export const chatCompletion = async (req, res) => {
+
+export const gptChatCompletion = async (req, res) => {
+    try {
+        const { text } = req.body;
+
+        const response = await openai.chat.completions.create({
+            model: "gpt-3.5-turbo",
+            messages: [
+                {role: 'system', content: 'You are a doctor.'},
+                { role: 'user', content: text }],
+            temperature: 1,
+            max_tokens: 50,
+            top_p: 1,
+            frequency_penalty: 0,
+            presence_penalty: 0
+        });
+
+        res.json(response);
+
+    } catch (error) {
+        handleError(error, res);
+    }
+};
+
+export const gptCompletion = async (req, res) => {
     try {
         const {text} = req.body;
         const chatCompletion = await openai.completions.create({
