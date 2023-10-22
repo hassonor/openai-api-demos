@@ -20,7 +20,7 @@ function Chat() {
             return;
         }
 
-        const response = await fetch('/api/chatgpt/chat', {
+        const response = await fetch('/api/chatgpt/weather', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

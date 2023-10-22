@@ -2,7 +2,7 @@ import {EventEmitter} from 'events';
 import {PDFExtract} from "pdf.js-extract";
 import openai from '../services/openaiService.js';
 import {calculateTokens, splitTextIntoChunks, summariseChunk, summariseChunks} from "../helpers/pdfHelper.js";
-import {runCompletion, runCompletion2, startCompletionStream} from "../helpers/openAIHelpers.js";
+import {runCompletion, runCompletion2, runCompletionChatBot, startCompletionStream} from "../helpers/openAIHelpers.js";
 import {getWeather} from "../services/weatherService.js";
 
 export const streamChat = async (req, res) => {
@@ -59,6 +59,21 @@ export const getWeatherWithGptChatCompletion = async (req, res) => {
 
             res.json(response);
         }
+
+    } catch (error) {
+        handleError(error, res);
+    }
+};
+
+
+export const getChatBotResponse = async (req, res) => {
+    try {
+        const {messages} = req.body;
+
+        const response = await runCompletionChatBot(messages);
+
+        res.json({data: response});
+
 
     } catch (error) {
         handleError(error, res);

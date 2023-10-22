@@ -1,0 +1,9 @@
+.chat-page {
+    height: 100vh;
+}
+
+.selected {
+    border: 5px solid red; /* changed the color to red */
+    box-sizing: border-box;
+}
+

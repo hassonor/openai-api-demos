@@ -84,6 +84,20 @@ export const runCompletion2 = async (prompt, function_arguments, weatherObject) 
 }
 
 
+export const runCompletionChatBot = async (messages) => {
+    const response = await openai.chat.completions.create({
+        model: "gpt-3.5-turbo-16k",
+        messages,
+        temperature: 1,
+        max_tokens: 50,
+        top_p: 1,
+        frequency_penalty: 0,
+        presence_penalty: 0
+    });
+    return response;
+}
+
+
 export const startCompletionStream = async (prompt, emitter) => {
     const stream = await openai.chat.completions.create({
         model: "gpt-3.5-turbo",
