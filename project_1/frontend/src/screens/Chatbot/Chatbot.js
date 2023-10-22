@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import './styles/style.css';
 import axios from "axios";
+import {Link} from "react-router-dom";
 
 function Chatbot() {
     const [inputMessage, setInputMessage] = useState('');
@@ -111,8 +112,12 @@ function Chatbot() {
 
     return (
         <div>
+            <Link to="/" className="btn btn-secondary mb-3">Home</Link>
+            <Link to="/stream" className="btn btn-secondary mb-3">Stream</Link>
+            <Link to="/weather" className="btn btn-secondary mb-3">Get Weather</Link>
+            <Link to="/pdfsummary" className="btn btn-secondary mb-3 mr-4">Book</Link>
             <div className='d-flex flex-column chat-page'>
-
+                
                 <div id='personalities' className='text-center'>
                     <h3>{selectedOption ? `You are chatting with: ${selectedOption}` : "Please select a character:"}</h3>
                     <div className='d-flex justify-content-center'>

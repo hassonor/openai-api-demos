@@ -3,7 +3,7 @@ import {Link} from "react-router-dom";
 import axios from "axios";
 import '../styles/style.css';
 
-function PDFSummary (){
+function PDFSummary() {
     const [inputValue, setInputValue] = useState('');
     const [error, setError] = useState('');
     const [result, setResult] = useState('');
@@ -17,29 +17,29 @@ function PDFSummary (){
         setSelectedFile(file);
     }
 
-    const handleSubmit = async(event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
         setLoading(true);
 
 
-        if(!maxWords){
+        if (!maxWords) {
             setError('Please enter a number of words for the summary!');
             setResult('');
             setJresult('');
             return;
         }
 
-        try{
+        try {
             const formData = new FormData();
             formData.append('pdf', selectedFile);
             formData.append('maxWords', maxWords);
 
-            const response = await axios.post('/api/chatgpt/summary-pdf',formData, {
+            const response = await axios.post('/api/chatgpt/summary-pdf', formData, {
                 headers: {'Content-Type': 'multipart/form-data'},
             });
 
             console.log(response.data);
-            if(response.data.error){
+            if (response.data.error) {
                 setError(response.data.error);
                 return;
             }
@@ -60,26 +60,27 @@ function PDFSummary (){
             //     throw new Error('An error occurred while submitting the form.');
             // }
 
-        }
-        catch(error){
+        } catch (error) {
             console.log(error);
             setResult('');
             setError('An error occurred while submitting the form.');
-        }
-        finally {
+        } finally {
             setLoading(false);
         }
     }
 
     return (
         <div className='container position-relative mt-4'>
-            <Link to="/stream" className="btn btn-secondary mb-3" style={{ marginRight: '20px' }}>Stream</Link>
             <Link to="/" className="btn btn-secondary mb-3">Home</Link>
+            <Link to="/stream" className="btn btn-secondary mb-3">Stream</Link>
+            <Link to="/chatbot" className="btn btn-secondary mb-3">Chatbot</Link>
+            <Link to="/weather" className="btn btn-secondary mb-3">Get Weather</Link>
             <div className='hero d-flex align-items-center justify-content-center text-center flex-column p-4'>
                 <h1 className='display-4 mb-3'>PDF Book Summariser</h1>
                 <p className='lead mb-4'>Summarise PDF Books</p>
                 <form className='w-100' onSubmit={handleSubmit}>
-                    <input type='file' accept='.pdf' onChange={handleFileChange} className='mb-3' /> {/* Added margin-bottom */}
+                    <input type='file' accept='.pdf' onChange={handleFileChange}
+                           className='mb-3'/> {/* Added margin-bottom */}
                     <div className="form-group row">
                         <div className="col-sm-4 offset-sm-4 mt-3">
                             <input type='number' min='10' value={maxWords}
@@ -90,7 +91,8 @@ function PDFSummary (){
                                    className='form-control'
                             />
                         </div>
-                        <button type='submit' disabled={!selectedFile || loading} className='btn btn-primary custom-button mt-1'>
+                        <button type='submit' disabled={!selectedFile || loading}
+                                className='btn btn-primary custom-button mt-1'>
                             {loading ? 'Analysing PDF... Please wait' : `Summarise PDF in about ${maxWords} words`}
                         </button>
                     </div>

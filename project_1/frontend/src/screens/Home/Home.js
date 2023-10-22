@@ -2,23 +2,23 @@ import React, {useState} from 'react';
 import '../styles/style.css';
 import {Link} from "react-router-dom";
 
-function Home (){
+function Home() {
     const [inputValue, setInputValue] = useState('');
     const [error, setError] = useState('');
     const [result, setResult] = useState('');
     const [prompt, setPrompt] = useState('');
     const [jresult, setJresult] = useState('');
 
-    const handleSubmit = async(event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
-        if(!inputValue){
+        if (!inputValue) {
             setError('Please enter a prompt!');
             setPrompt('');
             setResult('');
             setJresult('');
             return;
         }
-        try{
+        try {
             const response = await fetch('/api/chatgpt', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
@@ -27,7 +27,7 @@ function Home (){
                 })
             });
 
-            if(response.ok){
+            if (response.ok) {
                 const data = await response.json();
                 console.log(data);
                 setPrompt(inputValue);
@@ -36,13 +36,11 @@ function Home (){
                 setInputValue('');
                 setError('');
 
-            }
-            else{
+            } else {
                 throw new Error('An error occurred while submitting the form.');
             }
 
-        }
-        catch(error){
+        } catch (error) {
             console.log(error);
             setResult('');
             setError('An error occurred while submitting the form.');
@@ -52,12 +50,15 @@ function Home (){
 
     return (
         <div className='container position-relative mt-4 '>
-            <Link to="/stream" className="btn btn-secondary mb-3" style={{ marginRight: '20px' }}>Stream</Link>
-            <Link to="/pdfsummary" className="btn btn-secondary mb-3 mr-4">Book Summary</Link>
+            <Link to="/stream" className="btn btn-secondary mb-3">Stream</Link>
+            <Link to="/chatbot" className="btn btn-secondary mb-3">Chatbot</Link>
+            <Link to="/weather" className="btn btn-secondary mb-3">Get Weather</Link>
+            <Link to="/pdfsummary" className="btn btn-secondary mb-3 mr-4">Book</Link>
+
             <form className='form-horizontal' onSubmit={handleSubmit}>
-            <div className='row form-group  mt-2'>
-                <div className='col-sm-10'>
-                    <div className='form-floating'>
+                <div className='row form-group  mt-2'>
+                    <div className='col-sm-10'>
+                        <div className='form-floating'>
                         <textarea
                             className='form-control custom-input'
                             id='floatingTextarea'
@@ -72,13 +73,13 @@ function Home (){
                                 }
                             }}
                         />
-                        <label htmlFor='floatingTextarea'>Input</label>
+                            <label htmlFor='floatingTextarea'>Input</label>
+                        </div>
+                    </div>
+                    <div className='col-sm-2 '>
+                        <button type="submit" className='btn btn-primary custom-button mb-2'>Submit</button>
                     </div>
                 </div>
-                <div className='col-sm-2 '>
-                    <button type="submit" className='btn btn-primary custom-button mb-2'>Submit</button>
-                </div>
-            </div>
             </form>
             {error && <div className='alert alert-dark mt-3'>{error}</div>}
             {prompt && <div className='alert alert-secondary mt-3'>{prompt}</div>}

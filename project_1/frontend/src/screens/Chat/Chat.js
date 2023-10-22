@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import '../styles/style.css';
+import {Link} from "react-router-dom";
 
 function Chat() {
     const [inputValue, setInputValue] = useState('');
@@ -50,6 +51,10 @@ function Chat() {
 
     return (
         <div className="container">
+            <Link to="/" className="btn btn-secondary mb-3">Home</Link>
+            <Link to="/stream" className="btn btn-secondary mb-3">Stream</Link>
+            <Link to="/chatbot" className="btn btn-secondary mb-3">Chatbot</Link>
+            <Link to="/pdfsummary" className="btn btn-secondary mb-3 mr-4">Book</Link>
             <form className="form-horizontal" onSubmit={handleSubmit}>
                 <div className="form-group row">
                     <div className="col-sm-10 mt-2">

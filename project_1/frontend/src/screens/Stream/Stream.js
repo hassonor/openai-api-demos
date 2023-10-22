@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import '../styles/style.css';
 import {Link} from "react-router-dom";
 
@@ -23,8 +23,8 @@ function Stream() {
         try {
             const response = await fetch('/api/chatgpt/stream', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ text: inputValue }),
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({text: inputValue}),
             });
 
             if (response.ok) {
@@ -37,7 +37,7 @@ function Stream() {
                 setError('');
 
                 while (true) {
-                    const { value, done } = await reader.read();
+                    const {value, done} = await reader.read();
                     if (done) break;
 
                     const text = new TextDecoder().decode(value);
@@ -63,8 +63,11 @@ function Stream() {
 
     return (
         <div className='container position-relative mt-4'>
-            <Link to="/pdfsummary" className="btn btn-secondary mb-3 mr-4" style={{ marginRight: '20px' }}>Book Summary</Link>
             <Link to="/" className="btn btn-secondary mb-3">Home</Link>
+            <Link to="/chatbot" className="btn btn-secondary mb-3">Chatbot</Link>
+            <Link to="/weather" className="btn btn-secondary mb-3">Get Weather</Link>
+            <Link to="/pdfsummary" className="btn btn-secondary mb-3 mr-4" style={{marginRight: '20px'}}>Book
+                Summary</Link>
             <h5 className='display-6 mb-3'>Stream with OpenAI</h5>
             <form className='form-horizontal' onSubmit={handleSubmit}>
                 <div className='row form-group mt-2'>
@@ -74,7 +77,7 @@ function Stream() {
                                 className='form-control custom-input'
                                 id='floatingTextarea'
                                 placeholder='Enter a prompt'
-                                style={{ height: '100px' }}
+                                style={{height: '100px'}}
                                 value={inputValue}
                                 onChange={(event) => setInputValue(event.target.value)}
                                 onKeyDown={(event) => {
@@ -94,7 +97,8 @@ function Stream() {
             </form>
             {error && <div className='alert alert-dark mt-3'>{error}</div>}
             {prompt && <div className='alert alert-secondary mt-3'>{prompt}</div>}
-            {result && <div className='alert alert-success mt-3' style={{ whiteSpace: 'pre-line'}} dangerouslySetInnerHTML={{__html: result}}></div>}
+            {result && <div className='alert alert-success mt-3' style={{whiteSpace: 'pre-line'}}
+                            dangerouslySetInnerHTML={{__html: result}}></div>}
             {result && (
                 <pre className="alert alert-info mt-3">
                     <code>{jresult}</code>
